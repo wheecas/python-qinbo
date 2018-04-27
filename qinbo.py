@@ -5,13 +5,14 @@
 import sys, os, base64, datetime, hashlib, hmac 
 import requests # pip install requests
 # ************* 请求参数 *************
+import confighelper
 method = 'GET'
 service = '/weixin/v1/articles'
 host = 'api.gsdata.cn'
 #request_parameters = 'wx_name=qushikuangren'
 # 开放平台中的应用信息
-app_id = '538'
-secret_key = '3G0aUlbaMVSU4GJ1xuEfmrV94_HDq3pe'
+app_id =confighelper.getConfigValue("app_id")
+secret_key =confighelper.getConfigValue("secret_key")
 
 # 签名密钥
 def sign(key, msg):

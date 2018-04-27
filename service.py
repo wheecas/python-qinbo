@@ -2,12 +2,13 @@
  
 import pymysql
 import json
+import confighelper
  
-_host='rm-bp1429l3e4gt513wx.mysql.rds.aliyuncs.com'
+_host=confighelper.getConfigValue("host")
 _port=3306
-_user='e5b742395'
-_password='256caX40bae#78a'
-_db='bsk'
+_user=confighelper.getConfigValue("user")
+_password=confighelper.getConfigValue("password")
+_db=confighelper.getConfigValue("db")
 _cursorclass=pymysql.cursors.DictCursor
  
 def insert(object):

@@ -4,25 +4,44 @@ import sched
 import json
 import service
 import qinbo
-  
+import confighelper
+from threading import Thread
+
   
 # 初始化sched模块的scheduler类  
 # 第一个参数是一个可以返回时间戳的函数，第二个参数可以在定时未到达之前阻塞。  
-schedule = sched.scheduler(time.time, time.sleep)  
+schedule = sched.scheduler(time.time, time.sleep)
+lock = 0
   
 # 被周期性调度触发的函数  
 def execute_command(cmd, inc):
-    wx_names=service.getWxAuthor()
-    for name in wx_names:
-        crawlArticle(name)  
-        
-    schedule.enter(inc, 0, execute_command, (cmd, inc)) 
+    hour=time.strftime('%H',time.localtime())  
+    start_hour=confighelper.getConfigValue("start_hour")
+    if start_hour==hour:
+        Thread(target=crawlArticleJob).start()
+    else:
+        print("循环检查")
+    schedule.enter(inc, 0, execute_command, (cmd, inc))
   
 def main(cmd, inc=60):  
     # enter四个参数分别为：间隔事件、优先级（用于同时间到达的两个事件同时执行时定序）、被调用触发的函数，  
-    # 给该触发函数的参数（tuple形式）  
-    schedule.enter(0, 0, execute_command, (cmd, inc))  
-    schedule.run()  
+    # 给该触发函数的参数（tuple形式）
+        schedule.enter(0, 0, execute_command, (cmd, inc))  
+        schedule.run()
+
+def crawlArticleJob():
+    global lock
+    if lock==0:
+        lock=1
+        print("执行任务")
+        wx_names=service.getWxAuthor()
+        for name in wx_names:
+            crawlArticle(name)
+        inc=int(confighelper.getConfigValue("service_inc"))
+        time.sleep(inc)
+        lock=0
+    else:
+        print("任务执行中") 
 
 def crawlArticle(wx_name):
     
@@ -45,7 +64,6 @@ def crawlArticle(wx_name):
     
   
   
-# 每60秒查看下网络连接情况  
+# 每60秒检查是否运行服务
 if __name__ == '__main__':  
-    main("netstat -an", 24*60*60)  
-复制代码
+    main("netstat -an", 60)
