@@ -32,7 +32,7 @@ def insert(object):
 def get(id):
 	db = pymysql.connect(host=_host,port=_port,user=_user,password=_password,db=_db,cursorclass=_cursorclass,charset="utf8")
 	cursor = db.cursor()
-	sql="SELECT id FROM gsdata_wx WHERE id='"+id+"'"
+	sql="SELECT id FROM gsdata_wx_article WHERE id='"+id+"'"
 	try:
 		cursor.execute(sql)
 		_id=cursor.fetchone()

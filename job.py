@@ -35,6 +35,7 @@ def crawlArticleJob():
         lock=1
         print("执行任务")
         wx_names=service.getWxAuthor()
+        #wx_names=['wow36kr']
         for name in wx_names:
             crawlArticle(name)
         inc=int(confighelper.getConfigValue("service_inc"))
